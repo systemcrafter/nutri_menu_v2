@@ -1,4 +1,6 @@
+// main.dart
 import 'package:flutter/material.dart';
+import 'package:nutri_menu_v2/pages/home_page.dart';
 
 void main() => runApp(const MyApp());
 
@@ -7,10 +9,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Hola Mundo Ed',
-        home: RecipeBook());
+    return MaterialApp(debugShowCheckedModeBanner: false, home: RecipeBook());
   }
 }
 
@@ -19,15 +18,19 @@ class RecipeBook extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.orange,
-        title: Text(
-          'Libro de Recetas',
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
-      ),
+    return DefaultTabController(
+      length: 1,
+      child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.orange,
+            title: Text(
+              'Libro de Recetas',
+              style: TextStyle(color: Colors.white),
+            ),
+            centerTitle: true,
+            bottom: TabBar(tabs: [Tab(icon: Icon(Icons.home), text: 'Inicio')]),
+          ),
+          body: TabBarView(children: [HomePage()])),
     );
   }
 }
