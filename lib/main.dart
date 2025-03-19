@@ -1,3 +1,5 @@
+//main.dart
+
 import 'package:flutter/material.dart';
 import 'package:nutri_menu_v2/pages/login_page.dart';
 
@@ -11,6 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Material App',
       home: LoginPage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
