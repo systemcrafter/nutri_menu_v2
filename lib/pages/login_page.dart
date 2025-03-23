@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nutri_menu_v2/pages/register_page.dart';
-import 'home_page.dart';
+import 'home_page.dart'; // Importa HomePage
 
 class LoginPage extends StatelessWidget {
   final userController = TextEditingController();
@@ -9,9 +11,9 @@ class LoginPage extends StatelessWidget {
 
   LoginPage({super.key});
 
-  // Función asíncrona para manejar el login
-  Future<bool> login(String email, String password) async {
-    const String baseUrl = 'http://10.0.2.2:8000/api/users'; // URL para Android
+  Future<void> login(
+      BuildContext context, String email, String password) async {
+    const String baseUrl = 'http://10.0.2.2:8000/api/login';
 
     var client = http.Client();
     var url = Uri.parse(baseUrl);
@@ -21,15 +23,35 @@ class LoginPage extends StatelessWidget {
       'cache-control': 'no-cache'
     };
 
-    var response = await client.get(url, headers: headers);
+    var body = json.encode({
+      'email': email,
+      'password': password,
+    });
 
-    debugPrint(response.body);
+    var response = await client.post(url, headers: headers, body: body);
 
-    // Verifica si la respuesta es exitosa (código 200)
     if (response.statusCode == 200) {
-      return true; // Autenticación exitosa
+      final responseData = json.decode(response.body);
+      final token = responseData['token_app'];
+      final userName = responseData['usuario']['name'];
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', token);
+      await prefs.setString('userName', userName);
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => HomePage()), // Navega a HomePage
+      );
     } else {
-      return false; // Autenticación fallida
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Usuario o contraseña incorrectos'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 3),
+        ),
+      );
     }
   }
 
@@ -65,7 +87,7 @@ class LoginPage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: TextField(
                   controller: passwordController,
-                  obscureText: true, // Oculta la contraseña
+                  obscureText: true,
                   decoration: const InputDecoration(
                     labelText: 'Contraseña',
                     border: UnderlineInputBorder(),
@@ -77,45 +99,18 @@ class LoginPage extends StatelessWidget {
                 onPressed: () async {
                   String email = userController.text;
                   String password = passwordController.text;
-
-                  // Cierra el teclado activo
                   FocusScope.of(context).unfocus();
-
-                  // Verifica si los campos están vacíos
                   if (email.isEmpty || password.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text(
-                          'Los campos de usuario y contraseña no pueden estar vacíos.',
-                        ),
+                            'Los campos de usuario y contraseña no pueden estar vacíos.'),
                         backgroundColor: Colors.red,
                         duration: Duration(seconds: 3),
                       ),
                     );
                   } else {
-                    // Llama a la función login y espera su resultado
-                    bool isAuthenticated = await login(email, password);
-
-                    // Verifica si el widget todavía está montado
-                    if (!context.mounted) return;
-
-                    if (isAuthenticated) {
-                      // Navega a HomePage si las credenciales son correctas
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const HomePage()),
-                      );
-                    } else {
-                      // Muestra un mensaje de error si las credenciales no son válidas
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Usuario o contraseña incorrectos'),
-                          backgroundColor: Colors.red,
-                          duration: Duration(seconds: 3),
-                        ),
-                      );
-                    }
+                    await login(context, email, password);
                   }
                 },
                 style: ElevatedButton.styleFrom(

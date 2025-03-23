@@ -1,3 +1,4 @@
+//home_page.dart
 import 'package:flutter/material.dart';
 import 'package:nutri_menu_v2/pages/recipe_page.dart';
 import 'package:nutri_menu_v2/pages/account_page.dart';
@@ -13,13 +14,21 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  String userName =
+      "Nombre del Usuario"; // Simula el nombre del usuario obtenido del login
 
-  static List<Widget> _widgetOptions = <Widget>[
-    _RecipesList(),
-    const AccountPage(),
-    const SettingsPage(),
-    const LogoutPage(),
-  ];
+  late List<Widget> _widgetOptions; // Declaración tardía
+
+  @override
+  void initState() {
+    super.initState();
+    _widgetOptions = <Widget>[
+      _RecipesList(),
+      AccountPage(),
+      const SettingsPage(),
+      const LogoutPage(),
+    ];
+  }
 
   void _onItemTapped(int index) {
     setState(() {
