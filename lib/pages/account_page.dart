@@ -1,3 +1,5 @@
+//account_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:nutri_menu_v2/providers/user_provider.dart';
@@ -25,7 +27,15 @@ class _AccountPageState extends State<AccountPage> {
       body: Center(
         child: userProvider.userName == null
             ? const CircularProgressIndicator()
-            : Text('Bienvenido ${userProvider.userName}'),
+            : Text(
+                'Bienvenid@ ${userProvider.userName}',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Colors.orange,
+                    fontFamily: 'quicksand',
+                    fontSize: 50,
+                    fontWeight: FontWeight.bold),
+              ),
       ),
     );
   }

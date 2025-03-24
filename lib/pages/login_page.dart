@@ -1,3 +1,5 @@
+//login_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -35,9 +37,15 @@ class LoginPage extends StatelessWidget {
       final token = responseData['token_app'];
       final userName = responseData['usuario']['name'];
 
+      // Imprime el token en la consola de depuración
+      print('Token de autenticación: $token');
+
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('token', token);
       await prefs.setString('userName', userName);
+
+      // Imprime el token en la consola de depuración
+      print('Token de autenticación guardado: $token');
 
       Navigator.push(
         context,

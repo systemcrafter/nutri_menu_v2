@@ -4,6 +4,8 @@ import 'package:nutri_menu_v2/pages/recipe_page.dart';
 import 'package:nutri_menu_v2/pages/account_page.dart';
 import 'package:nutri_menu_v2/pages/settings_page.dart';
 import 'package:nutri_menu_v2/pages/logout_page.dart';
+import 'package:provider/provider.dart';
+import 'package:nutri_menu_v2/providers/user_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -24,7 +26,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _widgetOptions = <Widget>[
       _RecipesList(),
-      AccountPage(),
+      const AccountPage(),
       const SettingsPage(),
       const LogoutPage(),
     ];
@@ -38,7 +40,17 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+    final userName = userProvider.userName ?? "Cargando...";
+
     return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Bienvenid@ $userName',
+          style: TextStyle(
+              fontFamily: 'QuickSand', fontSize: 15, color: Colors.orange),
+        ),
+      ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
